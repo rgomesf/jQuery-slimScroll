@@ -76,10 +76,20 @@
         borderRadius: '7px',
 
         // sets border radius of the rail
-        railBorderRadius : '7px'
+        railBorderRadius : '7px',
+        
+        // use hack to allow mouse wheel scroll on page load (http://stackoverflow.com/a/6593995/1547641)
+        allowScrollOnPageLoad:false
       };
 
       var o = $.extend(defaults, options);
+      
+      if (o.allowScrollOnPageLoad)
+      {
+          var node = document.createElement('style');
+          node.innerHTML = o.wrapperClass+':hover {background-color: transparent; }';
+          document.body.appendChild(node);
+      }
 
       // do it for every element that matches selector
       this.each(function(){
@@ -267,6 +277,21 @@
           isOverPanel = false;
           hideBar();
         });
+        
+        if (o.allowScrollOnPageLoad) {
+          if (
+              me.parent().css('background-color') == 'transparent' ||
+              me.parent().css('background-color') == 'rgba(0, 0, 0, 0)'
+          ) {
+            isOverPanel = true;
+            showBar();
+            hideBar();
+          }
+          else {
+            isOverPanel = false;
+            hideBar();
+          }
+        }
 
         // support for mobile
         me.bind('touchstart', function(e,b){
